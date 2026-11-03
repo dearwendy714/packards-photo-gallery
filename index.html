@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Graffiti USA Photo Gallery</title>
+    <style>
+        :root {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #183b31;
+            background: #f5f0e4
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        body {
+            margin: 0
+        }
+
+        .gallery {
+            width: 100%;
+            height: 100dvh;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            padding: 12px;
+            gap: 8px
+        }
+
+        .heading {
+            font-family: Georgia, serif;
+            text-align: center;
+            font-size: clamp(16px, 2.5vw, 24px);
+            font-weight: bold;
+            letter-spacing: .02em
+        }
+
+        .stage {
+            position: relative;
+            flex: 1;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #e7dfd0;
+            border: 2px solid #c49b43;
+            border-radius: 7px;
+            overflow: hidden
+        }
+
+        .stage img {
+            height: 100%;
+            width: 100%;
+            object-fit: contain
+        }
+
+        .placeholder {
+            padding: 20px;
+            text-align: center;
+            max-width: 500px;
+            line-height: 1.5
+        }
+
+        .placeholder strong {
+            display: block;
+            font-size: clamp(17px, 2.5vw, 23px);
+            margin-bottom: 7px
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px
+        }
+
+        .controls button {
+            border: 0;
+            background: #193b31;
+            color: #fff;
+            font-size: clamp(15px, 2vw, 20px);
+            font-weight: 700;
+            border-radius: 7px;
+            padding: 12px 17px;
+            min-height: 48px;
+            cursor: pointer
+        }
+
+        .controls button:focus-visible {
+            outline: 4px solid #d2a24a;
+            outline-offset: 2px
+        }
+
+        .controls button:disabled {
+            opacity: .45;
+            cursor: not-allowed
+        }
+
+        .count {
+            font-size: clamp(14px, 2vw, 18px);
+            font-weight: 700;
+            white-space: nowrap
+        }
+
+        .caption {
+            text-align: center;
+            font-size: clamp(12px, 1.7vw, 16px);
+            min-height: 1.2em
+        }
+
+        @media(max-width:430px) {
+            .gallery {
+                padding: 7px;
+                gap: 5px
+            }
+
+            .controls button {
+                padding: 10px;
+                font-size: 14px
+            }
+
+            .heading {
+                font-size: 15px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="gallery">
+        <div class="heading">GRAFFITI USA · PHOTO GALLERY</div>
+        <div class="stage" id="stage">
+            <div class="placeholder"><strong>Our Modesto Memories</strong>Gallery ready for your Graffiti USA
+                photographs.<br>Replace the sample entries in <code>photos.json</code> with your photo filenames.</div>
+        </div>
+        <div class="controls"><button id="prev" type="button" aria-label="Previous photo">❮ Previous</button><span
+                id="counter" class="count" aria-live="polite">0 of 0</span><button id="next" type="button"
+                aria-label="Next photo">Next ❯</button></div>
+        <div id="caption" class="caption" aria-live="polite">Take your time exploring the collection.</div>
+    </main>
+    <script>const photos = []; let index = 0; const stage = document.getElementById('stage'), counter = document.getElementById('counter'), caption = document.getElementById('caption'), prev = document.getElementById('prev'), next = document.getElementById('next'); function render() { prev.disabled = next.disabled = !photos.length; if (!photos.length) return; const p = photos[index]; stage.replaceChildren(); const img = document.createElement('img'); img.src = p.src; img.alt = p.alt || p.caption || 'Museum photograph'; stage.appendChild(img); caption.textContent = p.caption || ''; counter.textContent = `${index + 1} of ${photos.length}`; } prev.onclick = () => { index = (index - 1 + photos.length) % photos.length; render() }; next.onclick = () => { index = (index + 1) % photos.length; render() }; document.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') prev.click(); if (e.key === 'ArrowRight') next.click() }); fetch('photos.json').then(r => r.json()).then(data => { if (Array.isArray(data)) { photos.push(...data.filter(p => p.src)); render() } }).catch(() => { }); render();</script>
+</body>
+
+</html>
